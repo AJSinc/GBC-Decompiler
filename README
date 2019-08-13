@@ -3,7 +3,7 @@ WIP GBC Decompiler
 Stuff to do: 
 
 Implement [CLNE] and [SWP] opcodes properly
-Implement [decrement] and [increment] opcodes for arrays
+Implement decrement [DECW] and increment [INCW] opcodes for arrays
 Implement opcodes for function calls [STDR/STPR]
 
 Convert control flow for the [ternary operator '?']/[switch/case], [for/while] loops to actual C code
