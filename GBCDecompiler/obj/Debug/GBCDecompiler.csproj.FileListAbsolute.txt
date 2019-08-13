@@ -1,0 +1,7 @@
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\bin\Debug\GBCDecompiler.exe.config
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\bin\Debug\GBCDecompiler.exe
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\bin\Debug\GBCDecompiler.pdb
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\obj\Debug\GBCDecompiler.csproj.CoreCompileInputs.cache
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\obj\Debug\GBCDecompiler.exe
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\obj\Debug\GBCDecompiler.pdb
+C:\Users\Alex\Documents\Visual Studio 2017\Projects\GBCDecompiler\GBCDecompiler\obj\Debug\GBCDecompiler.csprojResolveAssemblyReference.cache
