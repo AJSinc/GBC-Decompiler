@@ -1,3 +1,8 @@
 *.suo
+.vs/*
+.vs/*/*
+GBCDecompiler/obj/*
+GBCDecompiler/bin/*
+*/Debug/*
 GBCDecompiler/bin/Debug/GBCDecompiler.pdb
-GBCDecompiler/obj/Debug/GBCDecompiler.csproj.FileListAbsolute.txt
+*.exe
