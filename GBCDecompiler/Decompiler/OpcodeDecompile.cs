@@ -89,6 +89,7 @@ namespace GBCDecompiler
                 case OP.MULF: str = opMULF(); break;
                 case OP.SUB: str = opSUB(); break;
                 case OP.ADD: str = opADD(); break;
+                case OP.SRX:
                 case OP.SR: str = opSR(); break;
                 case OP.SL: str = opSL(); break;
                 case OP.GT: str = opGT(); break;
@@ -472,7 +473,7 @@ namespace GBCDecompiler
 
         private String opLDDI()
         {
-            return SetLastStackCode(GetArrayIndexFromStack(PopLastStackCode()));
+            return "";// SetLastStackCode(GetArrayIndexFromStack(PopLastStackCode()));
         }
 
         #endregion
@@ -497,7 +498,7 @@ namespace GBCDecompiler
         private String opSTDI()
         {
             String val = PopLastStackCode();
-            return GetArrayIndexFromStack(PopLastStackCode()) + " = " + val + ";";
+            return "";// GetArrayIndexFromStack(PopLastStackCode()) + " = " + val + ";";
         }
 
         #endregion
@@ -635,7 +636,7 @@ namespace GBCDecompiler
 
         private String opFTOI()
         {
-            stackCode.Add("(int) " + PopLastStackCode());
+            stackCode.Add("(int32) " + PopLastStackCode());
             return GetLastStackCode();
         }
 

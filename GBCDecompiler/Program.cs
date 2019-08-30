@@ -12,8 +12,11 @@ namespace GBCDecompiler
         static void Main(string[] args)
         {
             string path = @"C:\Users\Alex\Desktop\test.gbc";
-            GBCDecompiler d = new GBCDecompiler(path);
-            d.Decompile();
+            if (File.Exists(path))
+            {
+                GBCDecompiler d = new GBCDecompiler(path);
+                d.Decompile();
+            }
             Console.Read();
         }
     }

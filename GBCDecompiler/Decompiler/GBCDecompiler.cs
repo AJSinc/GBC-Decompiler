@@ -23,10 +23,7 @@ namespace GBCDecompiler
 
         public GBCDecompiler(String path)
         {
-            if (File.Exists(path))
-            {
-                reader = new BinaryReader(File.Open(path, FileMode.Open));
-            }
+            reader = new BinaryReader(File.Open(path, FileMode.Open));
         }
         
         public String Decompile()
