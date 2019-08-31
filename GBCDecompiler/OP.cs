@@ -79,6 +79,7 @@
         //     =          //
     GE = 0x61,   //  greater than or equals
     LE = 0x62,   //  less than or equals
+    LEX = 0x63, // less than or equals 
     GT = 0x65,   //  greater than
          //    =          //
     LT = 0x67,   //  less than
