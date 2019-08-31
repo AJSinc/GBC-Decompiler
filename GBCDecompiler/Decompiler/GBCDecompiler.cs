@@ -99,10 +99,10 @@ namespace GBCDecompiler
         private String DecompileNextCodeLine()
         {
             String str = "";
-            int op = 0;
+            OP op = 0;
             do
             {
-                op = reader.ReadByte();
+                op = (OP)reader.ReadByte();
                 currOpCode = (OP)op;
                 str = decompileOpcode(op);
                 prevDecOpCode = (OP)op;
