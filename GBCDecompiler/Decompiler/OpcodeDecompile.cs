@@ -326,8 +326,10 @@ namespace GBCDecompiler
             nestedEndOffset.Add(offset);
             if((OP)prevLineEndOpCode == OP.JMP)
             {
-                str = "else ";
+                str = codeLine.ElementAt(codeLine.Count - 1).Code;
+                str = str.Substring(0, str.Length - 1);
                 codeLine.RemoveAt(codeLine.Count - 1);
+                nestedEndOffset.Remove(offset);
             }
             return str + "if(" + PopLastStackCode() + ") {";
         }
