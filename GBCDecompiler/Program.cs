@@ -11,7 +11,7 @@ namespace GBCDecompiler
     {
         static void Main(string[] args)
         {
-            string path = @"C:\Users\Alex\Desktop\test.gbc";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\test.gbc";
             if (File.Exists(path))
             {
                 GBCDecompiler d = new GBCDecompiler(path);
