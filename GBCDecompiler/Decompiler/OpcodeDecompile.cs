@@ -14,11 +14,11 @@ namespace GBCDecompiler
         bool inCodeSeg = true;
         bool codeSegEnded = false;
         
-        private String decompileOpcode(int op)
+        private String decompileOpcode(OP op)
         {
             bool inCodeSegPrev = inCodeSeg;
             String str = "";
-            switch ((OP)op)
+            switch (op)
             {
                 case OP.DONE: return opDONE();
                 case OP.MAIN: str = opMAIN(); break;
@@ -95,6 +95,7 @@ namespace GBCDecompiler
                 case OP.GT: str = opGT(); break;
                 case OP.GE: str = opGE(); break;
                 case OP.LT: str = opLT(); break;
+                case OP.LEX:
                 case OP.LE: str = opLE(); break;
                 case OP.EQ: str = opEQ(); break;
                 case OP.NE: str = opNE(); break;
@@ -217,7 +218,7 @@ namespace GBCDecompiler
                 case OP.DOVR: str = opDOVR(); break;
                 case OP.PRTF: str = opPRTF(); break;
                 default:
-                    Console.Write("\r\nUknown OP: 0x" + op.ToString("X") + " at " + (reader.BaseStream.Position-1).ToString("X") + "\r\n");
+                    Console.Write("\r\nUknown OP: 0x" + ((byte)op).ToString("X") + " at " + (reader.BaseStream.Position-1).ToString("X") + "\r\n");
                     break;
             }
             
@@ -318,7 +319,7 @@ namespace GBCDecompiler
             return "";
         }
 
-        private String opBRZ() // check
+        private String opBRZ() // check - fix else
         {
             int offset = ReadNextUShort();
             String str = "";
