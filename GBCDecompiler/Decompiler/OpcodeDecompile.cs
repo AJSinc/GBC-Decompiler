@@ -279,24 +279,19 @@ namespace GBCDecompiler
         private String opJMP()
         {
             int offset = ReadNextUShort();
-            if (nestedEndOffset.Contains(reader.BaseStream.Position))
+            if (ifStatementEndOffset.Contains(reader.BaseStream.Position))
             {
-                String str = "";
-                for(int i = 0; i < nestedEndOffset.Count; i++)
+                if(reader.BaseStream.Position == offset) // else is empty - dont include it
                 {
-                    if (nestedEndOffset[i] == reader.BaseStream.Position)
-                    {
-                        str += "\r\n}";
-                        nestedEndOffset[i] = 0;
-                    }
+                    if (elseStatementEndOffset.Contains(offset)) elseStatementEndOffset.Remove(offset);
+                    return "";
                 }
-                nestedEndOffset.Add(offset);
-                return str + "\r\nelse {";
+                accountedIfStatmentEndOffset.Add(reader.BaseStream.Position);
+                ifStatementEndOffset.Remove(reader.BaseStream.Position);
+                elseStatementEndOffset.Add(offset);
+                return "}\r\nelse {";
             }
-            else
-            {
-                jumpLabelOffset.Add(offset);
-            }
+            jumpLabelOffset.Add(offset);
             return "goto label" + offset.ToString("X") + ";";
         }
 
@@ -321,16 +316,16 @@ namespace GBCDecompiler
 
         private String opBRZ() // check - fix else
         {
-            int offset = ReadNextUShort();
             String str = "";
-            nestedEndOffset.Add(offset);
-            if((OP)prevLineEndOpCode == OP.JMP)
+            int offset = ReadNextUShort();
+            ifStatementEndOffset.Add(offset);
+            if(prevLineEndOpCode == OP.JMP)
             {
-                str = codeLine.ElementAt(codeLine.Count - 1).Code;
+                str = codeLine[codeLine.Count - 1].Code;
                 str = str.Substring(0, str.Length - 1);
                 codeLine.RemoveAt(codeLine.Count - 1);
-                nestedEndOffset.Remove(offset);
             }
+
             return str + "if(" + PopLastStackCode() + ") {";
         }
 

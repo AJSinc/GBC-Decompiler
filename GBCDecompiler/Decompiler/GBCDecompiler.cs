@@ -15,8 +15,11 @@ namespace GBCDecompiler
         private long codeBeginOffset;
         List<CodeMemAddress> codeLine;
         List<GBCFunction> codeFunction;
-        private List<long> nestedEndOffset = new List<long>();
+        private List<long> ifStatementEndOffset = new List<long>();
+        private List<long> accountedIfStatmentEndOffset = new List<long>();
+        private List<long> elseStatementEndOffset = new List<long>();
         private List<long> jumpLabelOffset = new List<long>();
+        
         OP currOpCode;
         OP prevLineEndOpCode;
         OP prevDecOpCode;
@@ -70,21 +73,34 @@ namespace GBCDecompiler
 
         private String DecompileCodeBlocks()
         {
-            while(reader.BaseStream.Position < reader.BaseStream.Length)
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 String newCode = "";
                 long pos = reader.BaseStream.Position;
-                foreach (int a in nestedEndOffset) if(a == pos) newCode += "}\r\n";
-                foreach(GBCFunction f in codeFunction)
+                
+                foreach (int offset in ifStatementEndOffset)
+                {
+                    if (offset == reader.BaseStream.Position) newCode = "}\r\n";
+                }
+
+                // Function address check
+                foreach (GBCFunction f in codeFunction)
                 {
                     if (f.Address == pos) newCode += f.ToString() + "{ \r\n";
                 }
-                    
 
-
-                
                 newCode += DecompileNextCodeLine();
+
+                foreach (int offset in elseStatementEndOffset)
+                {
+                    if (offset == reader.BaseStream.Position) {
+                        newCode += "\r\n}";
+                        break;
+                    }
+                }
+
                 codeLine.Add(new CodeMemAddress(newCode, (uint)pos));
+                
             }
             String str = "init {\r\n";
             foreach (CodeMemAddress c in codeLine)
