@@ -105,6 +105,11 @@ namespace GBCDecompiler
             String str = "init {\r\n";
             foreach (CodeMemAddress c in codeLine)
             {
+                if (jumpLabelOffset.Count > 0 && c.Address == jumpLabelOffset[0])
+                {
+                    str += "label_0x" + c.Address.ToString("X") + ":\r\n";
+                    jumpLabelOffset.RemoveAt(0);
+                }
                 if (str.Length == 0) continue;
                 str += (c.Code + "\r\n");
             }
