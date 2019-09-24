@@ -318,11 +318,15 @@ namespace GBCDecompiler
         {
             String str = "";
             int offset = ReadNextUShort();
-            ifStatementEndOffset.Add(offset);
-            if(prevLineEndOpCode == OP.JMP)
+            if (!elseStatementEndOffset.Contains(offset)) ifStatementEndOffset.Add(offset); // empty else if
+            //if (offset != reader.BaseStream.Position && !elseStatementEndOffset.Contains(offset)) ifStatementEndOffset.Add(offset); // empty else if
+            if (prevLineEndOpCode == OP.JMP)
             {
                 str = codeLine[codeLine.Count - 1].Code;
-                str = str.Substring(0, str.Length - 1);
+                if (str.Length > 0) // prev else was removed for being empty
+                {
+                    str = str.Substring(0, str.Length - 1);
+                }
                 codeLine.RemoveAt(codeLine.Count - 1);
             }
 
