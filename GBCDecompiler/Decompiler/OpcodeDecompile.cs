@@ -281,7 +281,7 @@ namespace GBCDecompiler
             int offset = ReadNextUShort();
             if (ifStatementEndOffset.Contains(reader.BaseStream.Position))
             {
-                if(reader.BaseStream.Position == offset) // else is empty - dont include it
+                if (reader.BaseStream.Position == offset) // else is empty - dont include it
                 {
                     if (elseStatementEndOffset.Contains(offset)) elseStatementEndOffset.Remove(offset);
                     return "";
@@ -291,8 +291,11 @@ namespace GBCDecompiler
                 elseStatementEndOffset.Add(offset);
                 return "}\r\nelse {";
             }
+            if (reader.BaseStream.Position == offset) { // empty else if followed by an empty else
+                return "}";
+            }
             jumpLabelOffset.Add(offset);
-            return "goto label" + offset.ToString("X") + ";";
+            return "goto label_0x" + offset.ToString("X") + ";";
         }
 
         private String opJMPZ() // check
