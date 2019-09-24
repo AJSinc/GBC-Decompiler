@@ -283,7 +283,7 @@ namespace GBCDecompiler
             {
                 if (reader.BaseStream.Position == offset) // else is empty - dont include it
                 {
-                    if (elseStatementEndOffset.Contains(offset)) elseStatementEndOffset.Remove(offset);
+                    while (elseStatementEndOffset.Contains(offset)) elseStatementEndOffset.Remove(offset);
                     return "";
                 }
                 accountedIfStatmentEndOffset.Add(reader.BaseStream.Position);
@@ -292,6 +292,7 @@ namespace GBCDecompiler
                 return "}\r\nelse {";
             }
             if (reader.BaseStream.Position == offset) { // empty else if followed by an empty else
+                while(elseStatementEndOffset.Contains(offset)) elseStatementEndOffset.Remove(offset);
                 return "}";
             }
             jumpLabelOffset.Add(offset);
