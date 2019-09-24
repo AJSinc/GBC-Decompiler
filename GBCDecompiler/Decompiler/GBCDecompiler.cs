@@ -80,7 +80,7 @@ namespace GBCDecompiler
                 
                 foreach (int offset in ifStatementEndOffset)
                 {
-                    if (offset == reader.BaseStream.Position) newCode = "}\r\n";
+                    if (offset == reader.BaseStream.Position) newCode += "}\r\n";
                 }
 
                 // Function address check
