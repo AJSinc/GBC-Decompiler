@@ -13,26 +13,41 @@ namespace GBCDecompiler
     {
         private BinaryReader reader;
         private long codeBeginOffset;
+        private long currLineBeginOffset;
         List<CodeMemAddress> codeLine;
         List<GBCFunction> codeFunction;
-        private List<long> ifStatementEndOffset = new List<long>();
-        private List<long> accountedIfStatmentEndOffset = new List<long>();
-        private List<long> elseStatementEndOffset = new List<long>();
-        private List<long> jumpLabelOffset = new List<long>();
-        
+        private List<long> ifStatementEndOffset;
+        private List<long> accountedIfStatmentEndOffset;
+        private List<long> elseStatementEndOffset;
+        private List<long> whileStatementEndOffset;
+        private List<long> jumpLabelOffset;
+
+        private List<String> stackCode;
+        bool inCodeSeg;
+
         OP currOpCode;
         OP prevLineEndOpCode;
         OP prevDecOpCode;
 
-        public GBCDecompiler(String path)
+        public GBCDecompiler(String path) : this()
         {
             reader = new BinaryReader(File.Open(path, FileMode.Open));
+        }
+
+        public GBCDecompiler() {
+            codeLine = new List<CodeMemAddress>();
+            codeFunction = new List<GBCFunction>();
+            ifStatementEndOffset = new List<long>();
+            accountedIfStatmentEndOffset = new List<long>();
+            elseStatementEndOffset = new List<long>();
+            whileStatementEndOffset = new List<long>();
+            jumpLabelOffset = new List<long>();
+            stackCode = new List<String>();
+            inCodeSeg = true;
         }
         
         public String Decompile()
         {
-            codeLine = new List<CodeMemAddress>();
-            codeFunction = new List<GBCFunction>();
             reader.BaseStream.Position = 0;
             Console.Write(DecompileMetadata());
             Console.WriteLine("\r\n\r\n");
@@ -98,7 +113,7 @@ namespace GBCDecompiler
                         break;
                     }
                 }
-
+                
                 codeLine.Add(new CodeMemAddress(newCode, (uint)pos));
                 
             }
@@ -119,6 +134,7 @@ namespace GBCDecompiler
 
         private String DecompileNextCodeLine()
         {
+            currLineBeginOffset = reader.BaseStream.Position;
             String str = "";
             OP op = 0;
             do
@@ -158,13 +174,6 @@ namespace GBCDecompiler
             b[0] = reader.ReadByte(); b[1] = reader.ReadByte();
             return (b[0] << 8) + b[1];
         }
-
-        private OP ReadNextOp()
-        {
-            OP nextOp = (OP)reader.ReadByte();
-            reader.BaseStream.Position -= 1;
-            return nextOp;
-        }
         
         private String GetLastStackCode()
         {
@@ -188,11 +197,11 @@ namespace GBCDecompiler
             stackCode.Add(str);
             return str;
         }
-
+        
         /*
         private String GetArrayIndexFromStack(String str) // get better solution -> hacky now
         {
-            OP arrOp = ((currOpCode == OP.CLNE) ? ReadNextOp() : currOpCode);
+            OP arrOp = ((currOpCode == OP.CLNE) ? PeekNextOp() : currOpCode);
             String arrName = "";
             String idx = "";
             if (str.StartsWith("((")) // flip the array to the front
