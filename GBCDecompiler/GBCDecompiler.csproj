@@ -45,7 +45,6 @@
     <Compile Include="Decompiler\GBCFunction.cs" />
     <Compile Include="Decompiler\CodeMemAddress.cs" />
     <Compile Include="Decompiler\OpcodeDecompile.cs" />
-    <Compile Include="GBC.cs" />
     <Compile Include="Decompiler\GBCDecompiler.cs" />
     <Compile Include="Disassembler\GBCDisassemble.cs" />
     <Compile Include="OP.cs" />
