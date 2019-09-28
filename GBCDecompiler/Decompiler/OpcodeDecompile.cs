@@ -9,10 +9,6 @@ namespace GBCDecompiler
 {
     partial class GBCDecompiler
     {
-
-        private List<String> stackCode = new List<String>();
-        bool inCodeSeg = true;
-        bool codeSegEnded = false;
         
         private String decompileOpcode(OP op)
         {
@@ -234,6 +230,29 @@ namespace GBCDecompiler
             return str;
         }
 
+        private OP PeekNextOp()
+        {
+            OP nextOp = (OP)reader.ReadByte();
+            reader.BaseStream.Position -= 1;
+            return nextOp;
+        }
+
+        private OP PeekNextOp(int startPos, int opPostion)
+        {
+            long currReaderPos = reader.BaseStream.Position;
+            GBCDecompiler tmp = new GBCDecompiler();
+            tmp.reader = this.reader;
+            tmp.reader.BaseStream.Position = startPos;
+            while (tmp.reader.BaseStream.Position < opPostion)
+            {
+                tmp.DecompileNextCodeLine();
+            }
+            OP peekOP = tmp.PeekNextOp();
+
+            this.reader.BaseStream.Position = currReaderPos;
+            return peekOP;
+        }
+
         private String opDONE()
         {
             if (inCodeSeg)
@@ -279,6 +298,10 @@ namespace GBCDecompiler
         private String opJMP()
         {
             int offset = ReadNextUShort();
+            if(whileStatementEndOffset.Contains(currLineBeginOffset))
+            {
+                return "}";
+            }
             if (ifStatementEndOffset.Contains(reader.BaseStream.Position))
             {
                 if (reader.BaseStream.Position == offset) // else is empty - dont include it
@@ -322,6 +345,18 @@ namespace GBCDecompiler
         {
             String str = "";
             int offset = ReadNextUShort();
+            long currPos = reader.BaseStream.Position;
+            reader.BaseStream.Position = offset - 2;
+            if (ReadNextUShort() == currLineBeginOffset)
+            {
+                if (PeekNextOp((int)currPos, (offset - 3)) == OP.JMP)
+                {
+                    reader.BaseStream.Position = currPos;
+                    whileStatementEndOffset.Add(offset - 3);
+                    return "while(" + PopLastStackCode() + ") {";
+                }
+            }
+            reader.BaseStream.Position = currPos;
             if (!elseStatementEndOffset.Contains(offset)) ifStatementEndOffset.Add(offset); // empty else if
             //if (offset != reader.BaseStream.Position && !elseStatementEndOffset.Contains(offset)) ifStatementEndOffset.Add(offset); // empty else if
             if (prevLineEndOpCode == OP.JMP)
@@ -416,7 +451,7 @@ namespace GBCDecompiler
             }
             if (i == codeFunction.Count)
             {
-                int returns = ((ReadNextOp() == OP.POP||StackCount() > 0) ? 1 : 0); // test
+                int returns = ((PeekNextOp() == OP.POP||StackCount() > 0) ? 1 : 0); // test
                 codeFunction.Add(new GBCFunction(addr, paramCount, returns));
             }
             
@@ -526,7 +561,7 @@ namespace GBCDecompiler
                 {
                     return SetLastStackCode(PopLastStackCode() + "++");
                 }
-                if (OP.LDBI <= ReadNextOp() && ReadNextOp() <= OP.LDDI)
+                if (OP.LDBI <= PeekNextOp() && PeekNextOp() <= OP.LDDI)
                 {
                     reader.BaseStream.Position += 1; // skip these
                     return SetLastStackCode("(++" + PopLastStackCode().Substring(1));
@@ -544,7 +579,7 @@ namespace GBCDecompiler
                 }
                 else
                 {
-                    if (ReadNextOp() >= OP.LDB && ReadNextOp() <= OP.LDD)
+                    if (PeekNextOp() >= OP.LDB && PeekNextOp() <= OP.LDD)
                     {
                         reader.ReadByte(); // skip
                         if (varAddr == ReadNextUShort()) // compare if the next addr used is the same as the decemented one
@@ -578,7 +613,7 @@ namespace GBCDecompiler
                 }
                 else
                 { 
-                    if (ReadNextOp() >= OP.LDB && ReadNextOp() <= OP.LDD)
+                    if (PeekNextOp() >= OP.LDB && PeekNextOp() <= OP.LDD)
                     {
                         reader.ReadByte(); // skip
                         if (varAddr == ReadNextUShort()) // compare if the next addr used is the same as the decemented one
