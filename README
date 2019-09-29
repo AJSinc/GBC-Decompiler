@@ -6,6 +6,6 @@ Implement [CLNE] and [SWP] opcodes properly
 Implement decrement [DECW] and increment [INCW] opcodes for arrays
 Implement opcodes for function calls [STDR/STPR]
 
-Convert control flow for the [ternary operator '?']/[switch/case], [for/while] loops to actual C code
+Convert control flow for the [ternary operator '?']/[switch/case], to actual C code
 
 At a "call" memory address, convert it to the start of a function prototype
